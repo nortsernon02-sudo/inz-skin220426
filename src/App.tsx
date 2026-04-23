@@ -212,7 +212,6 @@ export default function CosmeticSalesDashboard() {
     const grouped: Record<string, any> = {};
 
     if (timeRange === 'monthly') {
-      // ✅ ใช้ records ทั้งหมด (ไม่ filter เดือนเดียว)
       records.forEach((r: any) => {
         if (!r.recordDate) return;
 
@@ -799,8 +798,8 @@ export default function CosmeticSalesDashboard() {
 
             
             {/* กราฟแท่งซ้อนกัน (เพิ่มปุ่มเลือกช่วงเวลาและแสดงผล 3 หมวดหมู่) */}
-            <div className="bg-white p-12 rounded-[2.5rem] shadow-sm border border-gray-100 h-[500px]">
-              <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+            <div className="bg-white p-4 rounded-[2.5rem] shadow-sm border border-gray-100 h-[500px]">
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                 <div>
                   <h3 className="font-black text-gray-800 text-lg">
                     แนวโน้มยอดขาย{timeRange === 'daily' ? 'รายวัน' : 'รายเดือน'}
@@ -809,6 +808,7 @@ export default function CosmeticSalesDashboard() {
                     สรุปภาพรวมแยกตามประเภทรายการ
                   </p>
                 </div>
+                
 
                 {/* ปุ่มเลือกช่วงเวลา (เหลือแค่ daily / monthly) */}
                 <div className="flex gap-2 bg-gray-50 p-1 rounded-2xl">
@@ -828,13 +828,22 @@ export default function CosmeticSalesDashboard() {
                 </div>
               </div>
 
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={getChartData()}
-                  barSize={timeRange === 'daily' ? 40 : 60}
-                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-                  style={{ backgroundColor: '#f3f4f6', borderRadius: '20px' }}
-                >
+
+
+          <div className="w-full overflow-x-auto">
+            <div
+                style={{
+                width: timeRange === 'daily'
+                ? `${getChartData().length * 130}px` // กำหนดความกว้างตามจำนวนวัน
+                  : '100%',
+                          }}
+                  >
+                <ResponsiveContainer width="100%" height={350}>
+                 <BarChart
+                 data={getChartData()}
+                 barSize={timeRange === 'daily' ? 40 : 60}
+                 margin={{ top: 10, right: 10, left: -20, bottom: 25 }}
+                   >
                   <CartesianGrid
                     strokeDasharray="3 3"
                     vertical={false}
@@ -842,7 +851,10 @@ export default function CosmeticSalesDashboard() {
                   />
 
                   <XAxis
-                    dataKey={timeRange === 'daily' ? 'recordDate' : 'month'}
+                    dataKey={timeRange === 'daily' ? 'recordDate' : 'month'} 
+                    fontSize={10}
+                    tick={{ fill: '#9ca3af' }}
+                    dy={10}
                   />
 
                   <YAxis
@@ -900,6 +912,8 @@ export default function CosmeticSalesDashboard() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
+          </div>
+          </div>
           </div>
         )}
 
@@ -1550,8 +1564,7 @@ export default function CosmeticSalesDashboard() {
               {activeTab === 'employee' && (
                  <EmployeeDashboard /> 
                )}
-      </div>{' '}
-      {/* ปิด div class max-w-7xl */}
+      </div> {/* ปิด div class max-w-7xl */}
     </div>
   ); // ปิดส่วน return หลัก
 } // ปิดฟังก์ชัน CosmeticSalesDashboard
